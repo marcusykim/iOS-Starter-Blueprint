@@ -1,0 +1,26 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Run lint + tests"
+  lane :ci do
+    sh("swiftlint")
+    scan(
+      project: "ClientApp.xcodeproj",
+      scheme: "ClientApp",
+      clean: true
+    )
+  end
+
+  desc "Build and upload beta to TestFlight"
+  lane :beta do
+    build_app(
+      project: "ClientApp.xcodeproj",
+      scheme: "ClientApp",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
